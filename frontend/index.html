@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QOIN 💰 The Crypto Superhero Wallet!</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Comic book halftone background -->
+    <div class="halftone-bg"></div>
+
+    <!-- Header with comic style -->
+    <header class="comic-header">
+        <div class="header-burst">
+            <h1 class="comic-title">
+                <span class="title-shadow">QOIN</span>
+                <span class="title-main">QOIN</span>
+            </h1>
+            <p class="subtitle">💥 THE ULTIMATE CRYPTO WALLET! 💥</p>
+        </div>
+    </header>
+
+    <!-- Main hero section -->
+    <section class="hero-panel">
+        <div class="speech-bubble large">
+            <p>Welcome, Hero! 🦸‍♂️</p>
+            <p class="small-text">Create your wallet and start your crypto journey!</p>
+        </div>
+    </section>
+
+    <!-- Action panels -->
+    <div class="comic-grid">
+        <!-- Panel 1: Create Wallet -->
+        <div class="comic-panel" id="createPanel">
+            <div class="panel-header">
+                <h2>⚡ POWER UP! ⚡</h2>
+            </div>
+            <div class="panel-content">
+                <div class="action-bubble">
+                    <p>Create Your Super Wallet!</p>
+                </div>
+                <form id="createWalletForm" class="comic-form">
+                    <input type="text" id="userId" placeholder="Your Hero Name" class="comic-input" required>
+                    <input type="email" id="userEmail" placeholder="Hero Email" class="comic-input" required>
+                    <button type="submit" class="btn-pow">CREATE WALLET!</button>
+                </form>
+                <div id="createResult" class="result-box hidden"></div>
+            </div>
+        </div>
+
+        <!-- Panel 2: Deposit -->
+        <div class="comic-panel" id="depositPanel">
+            <div class="panel-header">
+                <h2>💰 POWER UP COINS! 💰</h2>
+            </div>
+            <div class="panel-content">
+                <div class="action-bubble">
+                    <p>Deposit & Mint Qoins!</p>
+                </div>
+                <form id="depositForm" class="comic-form">
+                    <input type="text" id="depositAddress" placeholder="Wallet Address" class="comic-input" required>
+                    <input type="number" id="depositAmount" placeholder="Amount" class="comic-input" min="0.01" step="0.01" required>
+                    <button type="submit" class="btn-zap">MINT QOINS!</button>
+                </form>
+                <div id="depositResult" class="result-box hidden"></div>
+            </div>
+        </div>
+
+        <!-- Panel 3: Send -->
+        <div class="comic-panel" id="sendPanel">
+            <div class="panel-header">
+                <h2>🚀 BLAST OFF! 🚀</h2>
+            </div>
+            <div class="panel-content">
+                <div class="action-bubble">
+                    <p>Send Qoins (1% Fee)</p>
+                </div>
+                <form id="sendForm" class="comic-form">
+                    <input type="text" id="sendFrom" placeholder="From Address" class="comic-input" required>
+                    <input type="text" id="sendTo" placeholder="To Address" class="comic-input" required>
+                    <input type="number" id="sendAmount" placeholder="Amount" class="comic-input" min="0.01" step="0.01" required>
+                    <input type="password" id="sendSecret" placeholder="Secret Key" class="comic-input" required>
+                    <button type="submit" class="btn-boom">SEND!</button>
+                </form>
+                <div id="sendResult" class="result-box hidden"></div>
+            </div>
+        </div>
+
+        <!-- Panel 4: Check Balance -->
+        <div class="comic-panel" id="balancePanel">
+            <div class="panel-header">
+                <h2>🔍 POWER LEVEL! 🔍</h2>
+            </div>
+            <div class="panel-content">
+                <div class="action-bubble">
+                    <p>Check Your Balance!</p>
+                </div>
+                <form id="balanceForm" class="comic-form">
+                    <input type="text" id="balanceAddress" placeholder="Wallet Address" class="comic-input" required>
+                    <button type="submit" class="btn-kapow">CHECK!</button>
+                </form>
+                <div id="balanceResult" class="result-box hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="comic-footer">
+        <div class="speech-bubble small">
+            <p>🦸‍♂️ Built on Stellar Network 🦸‍♀️</p>
+            <p class="small-text">Ultra-fast • Ultra-cheap • Ultra-awesome!</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
