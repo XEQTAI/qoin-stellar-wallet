@@ -167,7 +167,7 @@ from stellar_sdk import Keypair, Server, TransactionBuilder, Network, Asset
 SERVER_URL = "https://horizon-testnet.stellar.org"
 server = Server(SERVER_URL)
 QOIN_CODE = "QOIN"
-QOIN_ISSUER = "YOUR_ISSUER_PUBLIC_KEY"  # Replace with your QOIN issuer address
+QOIN_ISSUER = "GDRCM33AI6O6LVMPTN5NGKQS57VBQGAVA7J6VVSIT6PO5XFKEQLODHSO"  # Replace with your QOIN issuer address
 
 async def create_and_trust_wallet():
     # 1. Create Keypair
