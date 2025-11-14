@@ -1,4 +1,6 @@
 import os
+import time
+import requests
 from stellar_sdk import (
     Server, Keypair, TransactionBuilder, Network, Asset
 )
@@ -22,15 +24,24 @@ class StellarService:
         self.qoin_asset = Asset(QOIN_CODE, QOIN_ISSUER)
 
     async def create_and_trust_wallet(self):
-        """Create wallet, fund it, and add trustline for QOIN."""
         kp = Keypair.random()
         # 1. Fund wallet
-        import requests
         r = requests.get(f"https://friendbot.stellar.org?addr={kp.public_key}")
         if r.status_code != 200:
             raise Exception("Friendbot funding failed!")
-        # 2. Establish trustline
-        account = self.server.load_account(kp.public_key)
+
+        # 2. Wait and retry for account to be available
+        time.sleep(2)
+        for attempt in range(5):
+            try:
+                account = self.server.load_account(kp.public_key)
+                break
+            except Exception:
+                time.sleep(2)  # wait and retry
+        else:
+            raise Exception("Could not load new account on the network.")
+
+        # 3. Trust QOIN asset
         tx = (
             TransactionBuilder(account, self.network_passphrase, base_fee=100)
             .append_change_trust_op(asset=self.qoin_asset)
