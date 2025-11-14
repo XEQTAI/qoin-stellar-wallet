@@ -1,5 +1,5 @@
-from stellar_sdk import Server, Keypair, TransactionBuilder, Network, Asset, Account
-from stellar_sdk.exceptions import NotFoundError, BadRequestError
+from stellar_sdk import Server, Keypair, TransactionBuilder, Network, Asset
+from stellar_sdk.exceptions import NotFoundError
 import os
 from typing import Dict
 import asyncio
