@@ -1,35 +1,37 @@
+import os
 from fastapi import FastAPI, HTTPException, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
 from typing import Optional
-import os
-from stellar_sdk import Server, Keypair, TransactionBuilder, Network, Asset
-from stellar_sdk.exceptions import NotFoundError
+from stellar_sdk import Server, Keypair, TransactionBuilder, Network, Asset, NotFoundError
 
-# ---- QOIN SETTINGS ----
+# --- QOIN SETTINGS ---
 QOIN_CODE = "QOIN"
 QOIN_ISSUER = "GDRCM33AI6O6LVMPTN5NGKQS57VBQGAVA7J6VVSIT6PO5XFKEQLODHSO"
 API_SECRET_KEY = os.getenv("API_SECRET_KEY", "your-api-key-here")
 STELLAR_NETWORK = os.getenv("STELLAR_NETWORK", "testnet")
 FEE_WALLET_ADDRESS = os.getenv("FEE_WALLET_ADDRESS", None)
 
-# ---- STELLAR SERVICE ----
 class StellarService:
     def __init__(self):
-        self.network = STELLAR_NETWORK
-        url = "https://horizon.stellar.org" if self.network == "mainnet" else "https://horizon-testnet.stellar.org"
+        url = (
+            "https://horizon.stellar.org"
+            if STELLAR_NETWORK == "mainnet"
+            else "https://horizon-testnet.stellar.org"
+        )
         self.server = Server(url)
         self.network_passphrase = (
-            Network.PUBLIC_NETWORK_PASSPHRASE if self.network == "mainnet"
+            Network.PUBLIC_NETWORK_PASSPHRASE
+            if STELLAR_NETWORK == "mainnet"
             else Network.TESTNET_NETWORK_PASSPHRASE
         )
         issuer_secret = os.getenv("ISSUER_SECRET_KEY")
-        self.issuer_keypair = Keypair.secret_key(issuer_secret) if issuer_secret else None
+        self.issuer_keypair = Keypair.from_secret(issuer_secret) if issuer_secret else None
         self.qoin_asset = Asset(QOIN_CODE, QOIN_ISSUER)
 
     async def create_and_trust_wallet(self):
         kp = Keypair.random()
-        if self.network == "testnet":
+        if STELLAR_NETWORK == "testnet":
             import requests
             r = requests.get(f"https://friendbot.stellar.org?addr={kp.public_key}")
             if r.status_code != 200:
@@ -38,7 +40,8 @@ class StellarService:
         tx = (
             TransactionBuilder(acc, self.network_passphrase, base_fee=100)
             .append_change_trust_op(asset=self.qoin_asset)
-            .set_timeout(30).build()
+            .set_timeout(30)
+            .build()
         )
         tx.sign(kp)
         self.server.submit_transaction(tx)
@@ -49,31 +52,34 @@ class StellarService:
         tx = (
             TransactionBuilder(issuer_account, self.network_passphrase, base_fee=100)
             .append_payment_op(destination, self.qoin_asset, str(amount))
-            .set_timeout(30).build()
+            .set_timeout(30)
+            .build()
         )
         tx.sign(self.issuer_keypair)
         resp = self.server.submit_transaction(tx)
         return resp['hash']
 
-    async def send_payment(self, secret_key, to_address, amount):
-        sender_kp = Keypair.secret_key(secret_key)
+    async def send_payment(self, from_secret, to_address, amount):
+        sender_kp = Keypair.from_secret(from_secret)
         sender_acc = self.server.load_account(sender_kp.public_key)
         tx = (
             TransactionBuilder(sender_acc, self.network_passphrase, base_fee=100)
             .append_payment_op(to_address, self.qoin_asset, str(amount))
-            .set_timeout(30).build()
+            .set_timeout(30)
+            .build()
         )
         tx.sign(sender_kp)
         resp = self.server.submit_transaction(tx)
         return resp['hash']
 
-    async def burn_tokens(self, secret_key, amount):
-        sender_kp = Keypair.secret_key(secret_key)
+    async def burn_tokens(self, from_secret, amount):
+        sender_kp = Keypair.from_secret(from_secret)
         acc = self.server.load_account(sender_kp.public_key)
         tx = (
             TransactionBuilder(acc, self.network_passphrase, base_fee=100)
             .append_payment_op(self.issuer_keypair.public_key, self.qoin_asset, str(amount))
-            .set_timeout(30).build()
+            .set_timeout(30)
+            .build()
         )
         tx.sign(sender_kp)
         resp = self.server.submit_transaction(tx)
@@ -93,12 +99,12 @@ class StellarService:
         except NotFoundError:
             return 0.0
 
-# ---- FastAPI Setup ----
+# --- FASTAPI APP ---
 
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Or your domain only
+    allow_origins=["*"],  # Or restrict to your frontend domain
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -137,7 +143,6 @@ async def health_check():
 async def create_wallet(_: CreateWalletRequest, api_key: str = Depends(verify_api_key)):
     try:
         keys = await stellar.create_and_trust_wallet()
-        # Store in database if needed
         return {
             "success": True,
             "wallet_address": keys['public_key'],
