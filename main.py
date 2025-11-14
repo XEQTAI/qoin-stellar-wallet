@@ -165,9 +165,9 @@ async def send_qoins(request: SendRequest, api_key: str = Depends(verify_api_key
     try:
         fee = request.amount * 0.01
         recipient_amount = request.amount - fee
-        tx_hash = await stellar.send_payment(request.from_secret, request.to_address, recipient_amount)
+        tx_hash = await stellar.send_payment(request.secret_key, request.to_address, recipient_amount)
         if fee > 0 and FEE_WALLET_ADDRESS:
-            await stellar.send_payment(request.from_secret, FEE_WALLET_ADDRESS, fee)
+            await stellar.send_payment(request.secret_key, FEE_WALLET_ADDRESS, fee)
         return {
             "success": True,
             "tx_hash": tx_hash,
