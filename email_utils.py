@@ -2,7 +2,7 @@ import os
 import requests
 
 SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
-FROM_EMAIL = os.getenv("FROM_EMAIL", "no-reply@yourdomain.com")  # Use a verified sender at SendGrid!
+FROM_EMAIL = os.getenv("FROM_EMAIL", "no-reply@yourdomain.com")  # Use a verified sender
 
 def send_email(to_email: str, subject: str, html_body: str):
     if not SENDGRID_API_KEY:
