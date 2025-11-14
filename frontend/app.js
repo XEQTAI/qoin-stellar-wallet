@@ -2,7 +2,7 @@
 
 // Configuration
 const API_URL = https://qoin-wallet-api.onrender.com; // Replace with your deployed API URL
-const API_KEY = a4721fcd6034d9adbcad0979016796a4; // Replace with your API key
+const API_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZlY3J4ZXd6cWZvY2VmeXFlZnpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMwNDA1MTIsImV4cCI6MjA3ODYxNjUxMn0.q6AfX6tW0dPTOlVayCwet4SkmVkY-OwUknDjHcdyf-0; // Replace with your API key
 
 // Helper function for API calls
 async function apiCall(endpoint, method = 'GET', data = null) {
