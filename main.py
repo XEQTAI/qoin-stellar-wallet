@@ -83,6 +83,9 @@ async def create_wallet(request: CreateWalletRequest, api_key: str = Depends(ver
         # Generate Stellar keypair
         keypair = stellar.create_keypair()
 
+ # FUND the account so deposits work!
+    await stellar.fund_testnet_account(keypair['public_key'])
+        
         # Store in database
         wallet = await db.create_wallet(
             user_id=request.user_id,
