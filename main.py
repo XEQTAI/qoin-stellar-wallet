@@ -55,8 +55,8 @@ class StellarService:
         resp = self.server.submit_transaction(tx)
         return resp['hash']
 
-    async def send_payment(self, from_secret, to_address, amount):
-        sender_kp = Keypair.from_secret(from_secret)
+    async def send_payment(self, secret_key, to_address, amount):
+        sender_kp = Keypair.secret_key(secret_key)
         sender_acc = self.server.load_account(sender_kp.public_key)
         tx = (
             TransactionBuilder(sender_acc, self.network_passphrase, base_fee=100)
@@ -67,8 +67,8 @@ class StellarService:
         resp = self.server.submit_transaction(tx)
         return resp['hash']
 
-    async def burn_tokens(self, from_secret, amount):
-        sender_kp = Keypair.from_secret(from_secret)
+    async def burn_tokens(self, secret_key, amount):
+        sender_kp = Keypair.secret_key(secret_key)
         acc = self.server.load_account(sender_kp.public_key)
         tx = (
             TransactionBuilder(acc, self.network_passphrase, base_fee=100)
