@@ -1,7 +1,7 @@
 // QOIN Wallet Frontend - Comic Book Edition! 💥
 
 // Configuration
-const API_URL = https://qoin-wallet-api.onrender.com'; // Replace with your deployed API URL
+const API_URL = 'https://qoin-wallet-api.onrender.com'; // Replace with your deployed API URL
 const API_KEY = 'a4721fcd6034d9adbcad0979016796a4'; // Replace with your API key
 
 // Helper function for API calls
