@@ -3,7 +3,8 @@ from fastapi import FastAPI, HTTPException, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
 from typing import Optional
-from stellar_sdk import Server, Keypair, TransactionBuilder, Network, Asset, NotFoundError
+from stellar_sdk import Server, Keypair, TransactionBuilder, Network, Asset
+from stellar_sdk.exceptions import NotFoundError
 
 # --- QOIN SETTINGS ---
 QOIN_CODE = "QOIN"
