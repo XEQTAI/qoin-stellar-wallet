@@ -82,8 +82,9 @@ async def create_wallet(request: CreateWalletRequest, api_key: str = Depends(ver
     try:
         # Generate Stellar keypair
         keypair = stellar.create_keypair()
+         try:
         await stellar.fund_testnet_account(keypair['public_key'])
-         except Exception as e:
+    except Exception as e:
         
         # Store in database
         wallet = await db.create_wallet(
