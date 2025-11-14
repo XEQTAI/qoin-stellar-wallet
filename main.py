@@ -19,7 +19,10 @@ app = FastAPI(
 # CORS for frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+    "https://unrivaled-seahorse-c2a412.netlify.app",
+    "https://superlative-gnome-b08025.netlify.app"
+],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
