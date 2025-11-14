@@ -161,3 +161,41 @@ class StellarService:
         except Exception as e:
             print(f"Balance error: {e}")
             return 0.0
+
+from stellar_sdk import Keypair, Server, TransactionBuilder, Network, Asset
+
+SERVER_URL = "https://horizon-testnet.stellar.org"
+server = Server(SERVER_URL)
+QOIN_CODE = "QOIN"
+QOIN_ISSUER = "YOUR_ISSUER_PUBLIC_KEY"  # Replace with your QOIN issuer address
+
+async def create_and_trust_wallet():
+    # 1. Create Keypair
+    keypair = Keypair.random()
+
+    # 2. Fund with friendbot (testnet only)
+    import requests
+    response = requests.get(f"https://friendbot.stellar.org?addr={keypair.public_key}")
+    if response.status_code != 200:
+        raise Exception("Friendbot funding failed")
+
+    # 3. Establish trustline for QOIN
+    acc = server.load_account(keypair.public_key)
+    qoin_asset = Asset(QOIN_CODE, QOIN_ISSUER)
+    tx = (
+        TransactionBuilder(
+            source_account=acc,
+            network_passphrase=Network.TESTNET_NETWORK_PASSPHRASE,
+            base_fee=100)
+        .append_change_trust_op(asset=qoin_asset)
+        .set_timeout(30)
+        .build()
+    )
+    tx.sign(keypair)
+    server.submit_transaction(tx)
+
+    # Return keys for use and storage
+    return {
+        "public_key": keypair.public_key,
+        "secret_key": keypair.secret
+    }
