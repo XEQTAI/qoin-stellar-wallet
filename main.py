@@ -56,7 +56,7 @@ async def verify_api_key(x_api_key: str = Header(None)):
         raise HTTPException(status_code=401, detail="Invalid API key")
     return x_api_key
 
-@app.get("/").
+@app.get("/")
 @app.head("/")
 async def root():
     return {
