@@ -24,7 +24,7 @@ class StellarService:
             else Network.TESTNET_NETWORK_PASSPHRASE
         )
         issuer_secret = os.getenv("ISSUER_SECRET_KEY")
-        self.issuer_keypair = Keypair.from_secret(issuer_secret) if issuer_secret else None
+        self.issuer_keypair = Keypair.secret_key(issuer_secret) if issuer_secret else None
         self.qoin_asset = Asset(QOIN_CODE, QOIN_ISSUER)
 
     async def create_and_trust_wallet(self):
