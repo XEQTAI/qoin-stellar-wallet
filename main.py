@@ -79,26 +79,21 @@ async def root():
 @app.post("/api/wallet/create")
 async def create_wallet(request: CreateWalletRequest, api_key: str = Depends(verify_api_key)):
     try:
-        # Generate Stellar keypair
-        keypair = stellar.create_keypair()
-        
-        # FUND the account on the Stellar testnet via Friendbot!
-        await stellar.fund_testnet_account(keypair['public_key'])
-        
-        # Store in database
+        keys = await create_and_trust_wallet()
+
+        # Store in DB as before, e.g.:
         wallet = await db.create_wallet(
             user_id=request.user_id,
             email=request.email,
-            stellar_address=keypair['public_key'],
-            secret_key=keypair['secret_key']
+            stellar_address=keys['public_key'],
+            secret_key=keys['secret_key']
         )
 
         return {
             "success": True,
-            "wallet_address": keypair['public_key'],
-            "message": "Wallet created successfully. Store your secret key safely!",
-            "secret_key": keypair['secret_key'],
-            "warning": "Save this secret key! It cannot be recovered."
+            "wallet_address": keys['public_key'],
+            "secret_key": keys['secret_key'],
+            "message": "Wallet created, funded, and ready for QOIN!"
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
