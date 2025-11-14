@@ -1,9 +1,7 @@
 import os
 import time
 import requests
-from stellar_sdk import (
-    Server, Keypair, TransactionBuilder, Network, Asset
-)
+from stellar_sdk import Server, Keypair, TransactionBuilder, Network, Asset
 from stellar_sdk.exceptions import NotFoundError
 
 QOIN_CODE = "QOIN"
@@ -25,23 +23,21 @@ class StellarService:
 
     async def create_and_trust_wallet(self):
         kp = Keypair.random()
-        # 1. Fund wallet
         r = requests.get(f"https://friendbot.stellar.org?addr={kp.public_key}")
         if r.status_code != 200:
-            raise Exception("Friendbot funding failed!")
+            raise Exception("Friendbot funding failed! " + r.text)
 
-        # 2. Wait and retry for account to be available
-        time.sleep(2)
-        for attempt in range(5):
+        # Wait for the account to propagate
+        for attempt in range(8):
             try:
                 account = self.server.load_account(kp.public_key)
                 break
             except Exception:
-                time.sleep(2)  # wait and retry
+                time.sleep(2)
         else:
-            raise Exception("Could not load new account on the network.")
+            raise Exception("Could not load new account on the network after 16 seconds.")
 
-        # 3. Trust QOIN asset
+        # Establish trustline to QOIN
         tx = (
             TransactionBuilder(account, self.network_passphrase, base_fee=100)
             .append_change_trust_op(asset=self.qoin_asset)
@@ -49,7 +45,9 @@ class StellarService:
             .build()
         )
         tx.sign(kp)
-        self.server.submit_transaction(tx)
+        resp = self.server.submit_transaction(tx)
+        if not resp.get('successful', True):
+            raise Exception(f"Trustline creation failed: {resp}")
         return {"public_key": kp.public_key, "secret_key": kp.secret}
 
     async def mint_tokens(self, destination, amount):
@@ -57,8 +55,7 @@ class StellarService:
         tx = (
             TransactionBuilder(issuer_account, self.network_passphrase, base_fee=100)
             .append_payment_op(destination, self.qoin_asset, str(amount))
-            .set_timeout(30)
-            .build()
+            .set_timeout(30).build()
         )
         tx.sign(self.issuer_keypair)
         return self.server.submit_transaction(tx)['hash']
@@ -69,8 +66,7 @@ class StellarService:
         tx = (
             TransactionBuilder(sender_acc, self.network_passphrase, base_fee=100)
             .append_payment_op(to_address, self.qoin_asset, str(amount))
-            .set_timeout(30)
-            .build()
+            .set_timeout(30).build()
         )
         tx.sign(sender_kp)
         return self.server.submit_transaction(tx)['hash']
@@ -81,8 +77,7 @@ class StellarService:
         tx = (
             TransactionBuilder(acc, self.network_passphrase, base_fee=100)
             .append_payment_op(self.issuer_keypair.public_key, self.qoin_asset, str(amount))
-            .set_timeout(30)
-            .build()
+            .set_timeout(30).build()
         )
         tx.sign(sender_kp)
         return self.server.submit_transaction(tx)['hash']
